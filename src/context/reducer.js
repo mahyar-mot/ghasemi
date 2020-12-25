@@ -6,13 +6,13 @@ import {success} from '../utils/message';
 export default (state, action) => {
     switch (action.type) {
       case actionType.USER_LOGGED_IN:
-        document.cookie="token="+action.payload.access_token;
-        setToken(action.payload.access_token);
+        document.cookie="token="+action.payload.access;
+        setToken(action.payload.access);
         success('با موفقیت وارد شدید')
         return {
           ...state,
           isLoggedIn: true,
-          token: action.payload.access_token
+          token: action.payload.access
         };
 
       case actionType.USER_LOGGED_OUT:

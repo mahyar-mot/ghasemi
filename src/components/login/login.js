@@ -4,69 +4,90 @@ import {USER_LOGGED_IN, USER_LOGGED_OUT} from "../../context/actionType";
 import {fetcher} from "../../utils/common";
 import { error } from "../../utils/message";
 import {LOGIN_PATH} from "../../utils/constants";
-// import Logo from "../../assets/imgs/logo04.png"
-import {Spin, Space} from "antd";
+import {Form, Input, Button} from "antd";
 
 
 export default function Login(props) {
 
-    const [payload, setpayload] = React.useState({username: '', password: ''});
     const {isLoggedIn, dispatch} = React.useContext(store)
 
-    const inputChange = (ele) => {
-        setpayload({...payload, [ele.target.name]: ele.target.value})
-    }
-
-    const formSubmit = (e) => {
-        e.preventDefault();
-        if (payload.username && payload.password){
+    const formSubmit = (payload) => {
+        if (payload.SID && payload.password){
             fetcher(LOGIN_PATH,{
                 method: 'POST',
                 body:JSON.stringify(payload)
             })
             .then((response) => {
-                dispatch({ type: USER_LOGGED_IN, payload: response.result })
+                dispatch({ type: USER_LOGGED_IN, payload: response })
                 setTimeout( () => props.history.push("/"), 1000 )
             } )
             .catch( e => error( e.message ? e.message : undefined ) )
         }
     }
 
-    React.useEffect(() => {
-        // if (!Boolean(Token() && isLoggedIn)){
-        //     dispatch({type: USER_LOGGED_OUT});
-        // }
+    React.useEffect( () => {
+        if (isLoggedIn) setTimeout( () => props.history.push("/"), 1000 )
     }, [])
 
+    const layout = {
+        labelCol: { span: 6 },
+        wrapperCol: { span: 14 },
+    };
+
+    const tailLayout = {
+    wrapperCol: { offset: 4, span: 16 },
+    };
+
+    const onFinish = values => {
+        formSubmit(values)
+    };
+
+    const onFinishFailed = errorInfo => {
+        console.log('Failed:', errorInfo);
+    };
+
     return (
-        <div className="row justify-content-md-center mx-auto my-5 py-5" style={{maxWidth: "900px"}}>
-            <div className="col-md-6 text-center bg-white p-0">
-                {/* <div className="login-header text-right">
-                    ورود به سامانه
-                </div> */}
-                <div className="login-body py-3 mx-auto">
+        <div className="row justify-content-md-center mx-auto my-5 py-5 " style={{maxWidth: "900px"}}>
+            <div className="col-md-6 text-center bg-white p-0 shadow">
+                <div className="login-header text-right">
+                </div>
+                <div className="py-3 mx-auto">
                     <p className="text-bold font-gray-color">
-                        {/* <img className="img-fluid" src={Logo} /> */}
-                        {/* رصد فضای فرهنگی کشور */}
+                        ورود به پورتال
                     </p>
-                    <form >
-                        <div className="form-group text-right my-3 font-gray-color">
-                            <label htmlFor="login-username">نام کاربری</label>
-                            <input type="text" name="username" onChange={(ele) => inputChange(ele)} value={payload.username} className="form-control input-border" id="login-username" />
-                        </div>
-                        <div className="form-group text-right my-3 font-gray-color">
-                            <label htmlFor="login-password">کلمه عبور</label>
-                            <input type="password" name="password" className="form-control input-border" onChange={(ele) => inputChange(ele)} value={payload.password} id="login-password" />
-                        </div>
-                        <div className="form-group form-check my-3 text-right">
-                            <label className="form-check-label mr-4 font-size-sm font-gray-color" htmlFor="login-remember"> مرا به خاطر بسپار </label>
-                            <input type="checkbox" className="form-check-input" id="login-remember"/>
-                        </div>
-                        <button type="submit" className="btn main-btn-pill w-100 mt-2" onClick={(e) => formSubmit(e)} >ورود به سامانه</button>
-                    </form>
-                    <p className="pt-4 font-size-sm mt-2 font-gray-color">
-                        رمز عبور خود را فراموش کرده اید؟ <a href="/">کلیک کنید</a>
-                    </p>
+                    <Form
+                        className="py-2"
+                        {...layout}
+                        name="basic"
+                        initialValues={{ remember: true }}
+                        onFinish={onFinish}
+                        onFinishFailed={onFinishFailed}
+                        >
+
+                        <Form.Item
+                            className="py-1"
+                            label="نام کاربری"
+                            name="SID"
+                            rules={[{ required: true, message: 'نام کاربری اجباری است' }]}
+                        >
+                            <Input />
+                        </Form.Item>
+
+                        <Form.Item
+                            className="py-1"
+                            label="رمز عبور"
+                            name="password"
+                            rules={[{ required: true, message: 'رمز عبور اجباری است' }]}
+                        >
+                            <Input.Password />
+                        </Form.Item>
+
+                        <Form.Item {...tailLayout} className="mt-2" >
+                            <Button type="primary" htmlType="submit">
+                            ورود
+                            </Button>
+                        </Form.Item>
+                    </Form>
                 </div>
             </div>
         </div>

@@ -4,8 +4,7 @@ import {Token} from "../utils/utils";
 
 const getInitialState = () => {
     return {
-        isLoggedIn: true,
-        // isLoggedIn: Boolean(Token()),
+        isLoggedIn: Boolean(Token()),
         userName: null,
         postList: [],
     };
