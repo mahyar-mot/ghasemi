@@ -2,7 +2,8 @@ import React from 'react';
 import {Descriptions, Divider, Form, Input, Button, Select } from "antd";
 import {fetcher} from "../../utils/common";
 import { error, success } from "../../utils/message";
-import {SETS_LIST, QUESTIONS_LIST} from "../../utils/constants";
+import {SETS_LIST, QUESTIONS_LIST, QUESTIONS_DETAIL} from "../../utils/constants";
+import {FaEdit} from "react-icons/fa";
 
 const { Option } = Select;
 
@@ -10,7 +11,7 @@ const { Option } = Select;
 const QuestionDescription = (props) => (
     <div className="my-3">
         <Descriptions 
-            title={props.item.question}
+            title={<div> <h6>{props.item.question}</h6> <span className="pointer" onClick={ () => {props.setEditedItem(props.item); props.setIsEditing(true) }}>ویرایش <FaEdit /> </span> </div>}
             column={{ xxl: 4, xl: 4, lg: 4, md: 3, sm: 2, xs: 1 }}
         >
             <Descriptions.Item label="مربوط به امتحان" span={4}>{props.item.test_set}</Descriptions.Item>
@@ -33,8 +34,21 @@ const QuestionCreateForm = (props) => {
     const [form] = Form.useForm();
 
     const onFinish = (values) =>{
-        addQuestion(values)
+        if (props.isEditing){
+            let payload = {...props.editedItem, ...values}
+            editQuestion(payload)
+        }else{
+            addQuestion(values)
+        }
     }
+
+    React.useEffect(() => {
+        if (props.isEditing){
+             form.setFieldsValue(props.editedItem)
+        }else{
+            form.resetFields()
+        }
+    },[props.isEditing] );
 
     const addQuestion = (payload) => {
         fetcher(QUESTIONS_LIST,{
@@ -42,6 +56,16 @@ const QuestionCreateForm = (props) => {
             body: JSON.stringify(payload)
         }).then( response => {
             success("اضافه شد");
+            setTimeout( () => window.location.reload(), 1000);
+        }).catch( e => error(String(e)) )
+    }
+
+    const editQuestion = (payload) => {
+        fetcher(QUESTIONS_DETAIL(props.editedItem.id),{
+            method: "PUT",
+            body: JSON.stringify(payload)
+        }).then( response => {
+            success("ویرایش شد");
             setTimeout( () => window.location.reload(), 1000);
         }).catch( e => error(String(e)) )
     }
@@ -81,6 +105,7 @@ const QuestionCreateForm = (props) => {
             </Form.Item>
             <Form.Item >
                 <Button type="primary" htmlType="submit">ثبت</Button>
+                { props.isEditing && <Button type="reset" htmlType="reset" onClick={() => props.setIsEditing(false)}>انصراف</Button>}
             </Form.Item>
         </Form>
     )
@@ -91,6 +116,8 @@ export default function Questions(props) {
 
     const [setItems, setSetItems] = React.useState([]);
     const [questions, setQuestions] = React.useState([]);
+    const [isEditing, setIsEditing] = React.useState(false);
+    const [editedItem, setEditedItem] = React.useState({})
 
     React.useEffect( () => {
         fetchSets();
@@ -115,11 +142,11 @@ export default function Questions(props) {
                 <h5>لیست سوالات</h5>
             </div>
             <div className="p-3">
-                { questions.map( (item, index) => <QuestionDescription item={item} key={index} /> ) }
+                { questions.map( (item, index) => <QuestionDescription item={item} key={index} setIsEditing={setIsEditing} setEditedItem={setEditedItem} /> ) }
             </div>
             <Divider />
-            <h5>ساخت سوال جدید</h5>
-            <QuestionCreateForm setItems={setItems} />
+            { isEditing ? <h5>ویرایش سوال</h5> : <h5>ساخت سوال جدید</h5>}
+            <QuestionCreateForm editedItem={editedItem} setItems={setItems} isEditing={isEditing} setIsEditing={setIsEditing} />
         </div>
     )
 }

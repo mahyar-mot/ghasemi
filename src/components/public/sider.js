@@ -35,16 +35,21 @@ export default function SideMenu(props) {
                 style={{ height: '100%', borderRight: 0, backgroundColor: "#002329", color: "white" }}
             >
                 <Menu.Item key="1">
+                    <NavLinkRouter className="text-white text-decoration-none" to="/exams">
+                        آزمون ها
+                    </NavLinkRouter>
+                </Menu.Item>
+                <Menu.Item key="2">
                     <NavLinkRouter className="text-white text-decoration-none" to="/sets">
                         امتحانات
                     </NavLinkRouter>
                 </Menu.Item>
-                <Menu.Item key="2">
+                <Menu.Item key="3">
                     <NavLinkRouter className="text-white text-decoration-none" to="/questions">
                         سوالات
                     </NavLinkRouter>
                 </Menu.Item>
-                <Menu.Item key="3">
+                <Menu.Item key="4">
                     <NavLinkRouter className="text-white text-decoration-none" to="/tenants">
                         مدارس
                     </NavLinkRouter>

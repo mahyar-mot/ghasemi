@@ -1,16 +1,18 @@
 import React from 'react';
 import {NavLink} from "react-router-dom";
-import {Descriptions, Divider, Form, Input, Button, Checkbox, Collapse } from "antd";
+import {Descriptions, Divider, Form, Input, Button, Checkbox, Collapse, Upload} from "antd";
 import {fetcher} from "../../utils/common";
 import { error, success } from "../../utils/message";
 import {SETS_DETAIL, QUESTIONS_LIST} from "../../utils/constants";
+import {getTokenObject} from "../../utils/utils";
+import {FaEdit, FaFileUpload} from "react-icons/fa";
 
 const { Panel } = Collapse;
 
 
 const SetItemDescription = (props) => (
     <div className="my-2">
-        <Descriptions title={props.item.title}>
+        <Descriptions title={<div> <h6>{props.item.title}</h6> <span className="pointer" onClick={ () => props.setIsEditing(true)}>ویرایش <FaEdit /> </span> </div>}>
             <Descriptions.Item label="توضیحات">{props.item.text}</Descriptions.Item>
             <Descriptions.Item label="شماره">{props.item.number}</Descriptions.Item>
             <Descriptions.Item label="منتشر شده">{props.item.is_draft}</Descriptions.Item>
@@ -42,8 +44,76 @@ const QuestionItemDescription = (props) => (
     </Collapse>
 )
 
+const EditSet = (props) => {
+    const formLayout = {
+        labelCol: { span: 4, offset: 4 },
+        wrapperCol: { span: 14, offset: 4 },
+    }
 
-const SetCreateForm = (props) => {
+    const [form] = Form.useForm();
+
+    const onFinish = (values) =>{
+        values["is_draft"] = Boolean(values["is_draft"]);
+        let payload = {...props.item, ...values}
+        editSetItem(payload)
+    }
+
+    const editSetItem = (payload) => {
+        fetcher(SETS_DETAIL(props.setId),{
+            method: "PUT",
+            body: JSON.stringify(payload)
+        }).then( response => {
+            success("ویرایش شد");
+            setTimeout( () => window.location.reload(), 1000);
+        }).catch( e => error(String(e.text)) )
+    }
+
+    return (
+        <>
+            <Form
+                {...formLayout}
+                layout={'vertical'}
+                form={form}
+                size="large"
+                name="set-add" 
+                onFinish={onFinish}
+                initialValues={{
+                    ...props.item
+                }}
+            >
+                <Form.Item name="title" label="نام" rules={[{ required: true }]}>
+                    <Input />
+                </Form.Item>
+                <Form.Item name="text" label="متن" rules={[{ required: true }]}>
+                    <Input.TextArea/>
+                </Form.Item>
+                <Form.Item name="number" label="شماره" rules={[{ required: true }]}>
+                    <Input />
+                </Form.Item>
+                <Form.Item name="is_draft" label="منتشر شده" valuePropName="checked">
+                    <Checkbox />
+                </Form.Item>
+                <Form.Item >
+                    <Button type="primary" htmlType="submit">ثبت</Button>
+                    <Button type="reset" htmlType="reset" onClick={() => props.setIsEditing(false) }>انصراف</Button>
+                </Form.Item>
+            </Form>
+            <Upload
+                name='receiver_users_excel'
+                method="PUT"
+                action='http://questionary.ir/api/portal/sets/4/append_receiver_users'
+                headers={
+                    {authorization: `Bearer ${getTokenObject().Authorization}`}
+                }
+            >
+                <Button icon={ <FaFileUpload /> }>  لیست کاربران شرکت کننده  </Button>
+            </Upload>
+        </>
+    )
+}
+
+
+const QuestionCreateForm = (props) => {
 
     const formLayout = {
         labelCol: { span: 4, offset: 4 },
@@ -103,6 +173,8 @@ export default function SetDetails(props) {
 
     const [setItem, setSetItem] = React.useState({});
 
+    const [isEditing, setIsEditing] = React.useState(false);
+
     React.useEffect( () => {
         fetchSets()
     }, [])
@@ -116,8 +188,11 @@ export default function SetDetails(props) {
     return (
         <div className="p-5">
             <div className="p-3">
-                <SetItemDescription item={setItem} />
+                <SetItemDescription item={setItem} setIsEditing={setIsEditing} />
             </div>
+            {
+                isEditing && <div><EditSet item={setItem} setIsEditing={setIsEditing} setId={props.match.params.setId} /></div>
+            }
             <Divider />
             <div className="my-2">
                 <h5 className="mb-3">لیست سوالات</h5>
@@ -127,7 +202,7 @@ export default function SetDetails(props) {
             </div>
             <Divider />
             <h5>اضافه کردن سوال جدید</h5>
-            <SetCreateForm setId={props.match.params.setId} />
+            <QuestionCreateForm setId={props.match.params.setId} />
         </div>
     )
 }

@@ -12,7 +12,9 @@ module.exports = {
     SETS_LIST: "/portal/sets",
     SETS_DETAIL: (id) => `/portal/sets/${id}`,
     QUESTIONS_LIST: "/portal/questions",
+    QUESTIONS_DETAIL: (id) => `/portal/questions/${id}`,
     TENANTS_LIST: "/portal/tenants",
+    ANSWER_SET: (id) => `/portal/sets/${id}/answer`,
 
     // PARAMS:
     COOKIE_EXPIRES: 1 // IN DAYS
