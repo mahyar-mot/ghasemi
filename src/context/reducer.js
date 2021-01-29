@@ -24,6 +24,11 @@ export default (state, action) => {
           userName: null,
         };
 
+      case actionType.SET_USER_ROLE:
+        return {
+          ...state,
+          userRole: action.payload,
+        }
       case actionType.SET_ACTIVE_PROJECT:
         return{
           ...state,

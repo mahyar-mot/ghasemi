@@ -66,7 +66,7 @@ export default function ExamDetails(props) {
                 body: JSON.stringify({answers})
             })
             .then( response => success("جواب ها ارسال شد "))
-            .catch( e => error(String(e.text)))
+            .catch( e => error(String(e.message ? e.message : e.text)) )
         }
     }
 

@@ -14,7 +14,7 @@ const TakenDescription = (props) => (
         >
             {
                 props.item.map( (i,k) => (
-                    <Descriptions.Item span={4}><NavLink className="text-decoration-none" to={`/exams/${i.id}`} >{i.title}</NavLink></Descriptions.Item>
+                    <Descriptions.Item key={k} span={4}><NavLink className="text-decoration-none" to={`/exams/${i.id}`} >{i.title}</NavLink></Descriptions.Item>
                 ) )
             }
         </Descriptions>
@@ -29,7 +29,7 @@ const EnrolledDescription = (props) => (
         >
             {
                 props.item.map( (i,k) => (
-                    <Descriptions.Item span={4}><NavLink className="text-decoration-none" to={`/exams/${i.id}`} >{i.title}</NavLink></Descriptions.Item>
+                    <Descriptions.Item key={k} span={4}><NavLink className="text-decoration-none" to={`/exams/${i.id}`} >{i.title}</NavLink></Descriptions.Item>
                 ) )
             }
         </Descriptions>

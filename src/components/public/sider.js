@@ -7,7 +7,7 @@ import { Menu } from 'antd';
 
 export default function SideMenu(props) {
 
-    const {isLoggedIn, userName, dispatch} = useContext(store);
+    const {isLoggedIn, userName, userRole, dispatch} = useContext(store);
 
     const onLogout = () => {
         dispatch({type: USER_LOGGED_OUT})
@@ -39,21 +39,27 @@ export default function SideMenu(props) {
                         آزمون ها
                     </NavLinkRouter>
                 </Menu.Item>
-                <Menu.Item key="2">
-                    <NavLinkRouter className="text-white text-decoration-none" to="/sets">
-                        امتحانات
-                    </NavLinkRouter>
-                </Menu.Item>
-                <Menu.Item key="3">
-                    <NavLinkRouter className="text-white text-decoration-none" to="/questions">
-                        سوالات
-                    </NavLinkRouter>
-                </Menu.Item>
-                <Menu.Item key="4">
-                    <NavLinkRouter className="text-white text-decoration-none" to="/tenants">
-                        مدارس
-                    </NavLinkRouter>
-                </Menu.Item>
+                {
+                    userRole !== "student" && (
+                        <>
+                        <Menu.Item key="2">
+                            <NavLinkRouter className="text-white text-decoration-none" to="/sets">
+                                امتحانات
+                            </NavLinkRouter>
+                        </Menu.Item>
+                        <Menu.Item key="3">
+                            <NavLinkRouter className="text-white text-decoration-none" to="/questions">
+                                سوالات
+                            </NavLinkRouter>
+                        </Menu.Item>
+                        <Menu.Item key="4">
+                            <NavLinkRouter className="text-white text-decoration-none" to="/tenants">
+                                مدارس
+                            </NavLinkRouter>
+                        </Menu.Item>
+                        </>
+                    )
+                }
             </Menu>
         </div>
     )

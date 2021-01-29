@@ -1,9 +1,9 @@
 import React from 'react';
 import {store} from "../../context/store";
-import {USER_LOGGED_IN, USER_LOGGED_OUT} from "../../context/actionType";
+import {SET_USER_ROLE, USER_LOGGED_IN, USER_LOGGED_OUT} from "../../context/actionType";
 import {fetcher} from "../../utils/common";
 import { error } from "../../utils/message";
-import {LOGIN_PATH} from "../../utils/constants";
+import {LOGIN_PATH, USER_ROLE} from "../../utils/constants";
 import {Form, Input, Button} from "antd";
 
 
@@ -19,10 +19,17 @@ export default function Login(props) {
             })
             .then((response) => {
                 dispatch({ type: USER_LOGGED_IN, payload: response })
-                setTimeout( () => props.history.push("/"), 1000 )
+                userRole()
             } )
             .catch( e => error( e.message ? e.message : undefined ) )
         }
+    }
+
+    const userRole = () => {
+        fetcher(USER_ROLE).then(res => {
+            dispatch({type: SET_USER_ROLE, payload: res.role});
+            setTimeout( () => props.history.push("/"), 1000 );
+        }).catch(e => error( e.message ? e.message : undefined ))
     }
 
     React.useEffect( () => {

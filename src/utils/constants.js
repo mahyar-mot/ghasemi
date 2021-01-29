@@ -9,6 +9,7 @@ module.exports = {
     BASE_URL: "http://preforms.ir/api",
     PREFIX:"",
     LOGIN_PATH: "/token/",
+    USER_ROLE: "/portal/users/current",
     SETS_LIST: "/portal/sets",
     SETS_DETAIL: (id) => `/portal/sets/${id}`,
     QUESTIONS_LIST: "/portal/questions",

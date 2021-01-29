@@ -7,6 +7,7 @@ const getInitialState = () => {
         isLoggedIn: Boolean(Token()),
         userName: null,
         postList: [],
+        userRole: null,
     };
 }
 
